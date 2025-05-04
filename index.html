@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Estetik</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Meta tags -->
+    <meta name="author" content="ADE12">
+    <meta name="github" content="https://github.com/HolyBytes">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+        
+        body {
+            background: linear-gradient(135deg, #8BC6EC 0%, #9599E2 100%);
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .calculator-container {
+            padding: 20px;
+        }
+        
+        .calculator {
+            max-width: 400px;
+            margin: 0 auto;
+            border-radius: 24px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3), 
+                        0 8px 12px rgba(106, 58, 217, 0.2),
+                        inset 0 -10px 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            background: rgba(20, 20, 40, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transform: perspective(1000px);
+            transition: transform 0.3s;
+            position: relative;
+        }
+        
+        .calculator:hover {
+            transform: perspective(1000px) translateZ(5px);
+        }
+        
+        .calculator-screen {
+            width: 100%;
+            height: 100px;
+            background: linear-gradient(180deg, #0f0c29, #302b63, #24243e);
+            color: #fff;
+            text-align: right;
+            font-size: 3rem;
+            font-weight: 300;
+            padding: 15px 25px;
+            border: none;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            font-family: 'Poppins', monospace;
+            letter-spacing: 1px;
+        }
+        
+        .calculator-keys {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-gap: 8px;
+            padding: 15px;
+        }
+        
+        button {
+            height: 70px;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100px;
+            height: 100px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transform: scale(0) translate(-50%, -50%);
+            transform-origin: top left;
+            transition: transform 0.6s;
+            opacity: 0;
+        }
+        
+        button:active::before {
+            transform: scale(3) translate(-50%, -50%);
+            opacity: 1;
+            transition: transform 0s;
+        }
+        
+        button:active {
+            transform: translateY(4px);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        }
+        
+        .number {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            font-weight: 400;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .number:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-3px);
+            box-shadow: 0 7px 14px rgba(0, 0, 0, 0.3);
+        }
+        
+        .operator {
+            background: linear-gradient(45deg, #FF9A8B 0%, #FF6A88 55%, #FF99AC 100%);
+            color: white;
+            font-weight: 600;
+        }
+        
+        .operator:hover {
+            background: linear-gradient(45deg, #FF6A88 0%, #FF99AC 55%, #FF9A8B 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 7px 14px rgba(255, 106, 136, 0.4);
+        }
+        
+        .equal-sign {
+            background: linear-gradient(45deg, #13f1fc 0%, #0470dc 100%);
+            color: white;
+            grid-row: span 2;
+            height: 100%;
+            font-weight: 600;
+        }
+        
+        .equal-sign:hover {
+            background: linear-gradient(45deg, #0470dc 0%, #13f1fc 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 7px 14px rgba(4, 112, 220, 0.4);
+        }
+        
+        .all-clear {
+            background: linear-gradient(45deg, #f5576c 0%, #f093fb 100%);
+            color: white;
+            font-weight: 600;
+        }
+        
+        .all-clear:hover {
+            background: linear-gradient(45deg, #f093fb 0%, #f5576c 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 7px 14px rgba(245, 87, 108, 0.4);
+        }
+        
+        .delete {
+            background: linear-gradient(45deg, #FF8008 0%, #FFC837 100%);
+            color: white;
+            font-weight: 600;
+        }
+        
+        .delete:hover {
+            background: linear-gradient(45deg, #FFC837 0%, #FF8008 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 7px 14px rgba(255, 128, 8, 0.4);
+        }
+        
+        .decimal {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            font-weight: 700;
+        }
+        
+        .decimal:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-3px);
+            box-shadow: 0 7px 14px rgba(0, 0, 0, 0.3);
+        }
+        
+        .calculator-title {
+            background: linear-gradient(45deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            text-align: center;
+            padding: 15px 0;
+            font-weight: 500;
+            letter-spacing: 2px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .calculator-title h3 {
+            margin: 0;
+            position: relative;
+            z-index: 2;
+            font-size: 1.8rem;
+        }
+        
+        .calculator-title::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+            transform: rotate(-5deg);
+            z-index: 1;
+        }
+        
+        @media (max-width: 576px) {
+            .calculator {
+                max-width: 100%;
+                border-radius: 20px;
+            }
+            
+            .calculator-screen {
+                height: 90px;
+                font-size: 2.5rem;
+            }
+            
+            button {
+                height: 65px;
+                font-size: 1.6rem;
+            }
+        }
+        
+        /* Glow effect */
+        .glow {
+            animation: glow 1.5s ease-in-out infinite alternate;
+        }
+        
+        @keyframes glow {
+            from {
+                box-shadow: 0 0 5px rgba(255, 255, 255, 0.5),
+                           0 0 10px rgba(255, 255, 255, 0.3);
+            }
+            to {
+                box-shadow: 0 0 10px rgba(255, 255, 255, 0.7),
+                           0 0 20px rgba(255, 255, 255, 0.5),
+                           0 0 30px rgba(255, 255, 255, 0.3);
+            }
+        }
+        
+        /* Click effect animation */
+        @keyframes clickEffect {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(0.95);
+                opacity: 0.8;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container calculator-container">
+        <div class="calculator">
+            <div style="position: absolute; bottom: 10px; right: 15px; font-size: 0.7rem; color: rgba(255,255,255,0.5); z-index: 10;">
+                <a href="https://github.com/HolyBytes" target="_blank" style="color: rgba(255,255,255,0.7); text-decoration: none; display: flex; align-items: center;">
+                    <i class="fab fa-github me-1"></i>HolyBytes
+                </a>
+            </div>
+            <div class="calculator-title">
+                <h3><i class="fas fa-calculator me-2"></i>KALKULATOR ESTETIK</h3>
+                <div style="font-size: 0.8rem; opacity: 0.8; margin-top: 5px;">© ADE12</div>
+            </div>
+            <input type="text" class="calculator-screen glow" value="0" disabled />
+            
+            <div class="calculator-keys">
+                <button type="button" class="all-clear" value="all-clear">AC</button>
+                <button type="button" class="operator" value="%">%</button>
+                <button type="button" class="operator" value="/">&divide;</button>
+                <button type="button" class="operator" value="*">&times;</button>
+                
+                <button type="button" class="number" value="7">7</button>
+                <button type="button" class="number" value="8">8</button>
+                <button type="button" class="number" value="9">9</button>
+                <button type="button" class="operator" value="-">-</button>
+                
+                <button type="button" class="number" value="4">4</button>
+                <button type="button" class="number" value="5">5</button>
+                <button type="button" class="number" value="6">6</button>
+                <button type="button" class="operator" value="+">+</button>
+                
+                <button type="button" class="number" value="1">1</button>
+                <button type="button" class="number" value="2">2</button>
+                <button type="button" class="number" value="3">3</button>
+                <button type="button" class="equal-sign" value="=">=</button>
+                
+                <button type="button" class="number" value="0">0</button>
+                <button type="button" class="decimal" value=".">.</button>
+                <button type="button" class="delete" value="delete"><i class="fas fa-backspace"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const calculator = {
+                displayValue: '0',
+                firstOperand: null,
+                waitingForSecondOperand: false,
+                operator: null,
+            };
+            
+            function updateDisplay() {
+                const display = document.querySelector('.calculator-screen');
+                display.value = calculator.displayValue;
+            }
+            
+            function inputDigit(digit) {
+                const { displayValue, waitingForSecondOperand } = calculator;
+                
+                if (waitingForSecondOperand === true) {
+                    calculator.displayValue = digit;
+                    calculator.waitingForSecondOperand = false;
+                } else {
+                    calculator.displayValue = displayValue === '0' ? digit : displayValue + digit;
+                }
+            }
+            
+            function inputDecimal(dot) {
+                if (calculator.waitingForSecondOperand === true) {
+                    calculator.displayValue = '0.';
+                    calculator.waitingForSecondOperand = false;
+                    return;
+                }
+                
+                if (!calculator.displayValue.includes(dot)) {
+                    calculator.displayValue += dot;
+                }
+            }
+            
+            function handleOperator(nextOperator) {
+                const { firstOperand, displayValue, operator } = calculator;
+                const inputValue = parseFloat(displayValue);
+                
+                if (operator && calculator.waitingForSecondOperand) {
+                    calculator.operator = nextOperator;
+                    return;
+                }
+                
+                if (firstOperand === null && !isNaN(inputValue)) {
+                    calculator.firstOperand = inputValue;
+                } else if (operator) {
+                    const result = calculate(firstOperand, inputValue, operator);
+                    calculator.displayValue = `${parseFloat(result.toFixed(7))}`;
+                    calculator.firstOperand = result;
+                }
+                
+                calculator.waitingForSecondOperand = true;
+                calculator.operator = nextOperator;
+            }
+            
+            function calculate(firstOperand, secondOperand, operator) {
+                if (operator === '+') {
+                    return firstOperand + secondOperand;
+                } else if (operator === '-') {
+                    return firstOperand - secondOperand;
+                } else if (operator === '*') {
+                    return firstOperand * secondOperand;
+                } else if (operator === '/') {
+                    return firstOperand / secondOperand;
+                } else if (operator === '%') {
+                    return firstOperand % secondOperand;
+                }
+                
+                return secondOperand;
+            }
+            
+            function resetCalculator() {
+                calculator.displayValue = '0';
+                calculator.firstOperand = null;
+                calculator.waitingForSecondOperand = false;
+                calculator.operator = null;
+            }
+            
+            function deleteLastDigit() {
+                const { displayValue } = calculator;
+                calculator.displayValue = displayValue.substring(0, displayValue.length - 1);
+                
+                if (calculator.displayValue === '') {
+                    calculator.displayValue = '0';
+                }
+            }
+            
+            // Add click effect to buttons
+            function addClickEffect(element) {
+                element.style.animation = 'clickEffect 0.3s';
+                setTimeout(() => {
+                    element.style.animation = '';
+                }, 300);
+            }
+            
+            const keys = document.querySelector('.calculator-keys');
+            keys.addEventListener('click', (event) => {
+                const { target } = event;
+                
+                if (!target.matches('button')) {
+                    return;
+                }
+                
+                // Add click effect
+                addClickEffect(target);
+                
+                // Console credit (developer signature)
+                if (target.classList.contains('all-clear')) {
+                    console.log('%c Kalkulator Estetik by ADE12 %c https://github.com/HolyBytes ', 
+                               'background: #11998e; color: white; border-radius: 3px 0 0 3px; padding: 2px;', 
+                               'background: #333; color: white; border-radius: 0 3px 3px 0; padding: 2px;');
+                }
+                
+                if (target.classList.contains('operator')) {
+                    handleOperator(target.value);
+                    updateDisplay();
+                    return;
+                }
+                
+                if (target.classList.contains('decimal')) {
+                    inputDecimal(target.value);
+                    updateDisplay();
+                    return;
+                }
+                
+                if (target.classList.contains('all-clear')) {
+                    resetCalculator();
+                    updateDisplay();
+                    return;
+                }
+                
+                if (target.classList.contains('delete')) {
+                    deleteLastDigit();
+                    updateDisplay();
+                    return;
+                }
+                
+                if (target.classList.contains('equal-sign')) {
+                    handleOperator('=');
+                    updateDisplay();
+                    return;
+                }
+                
+                inputDigit(target.value);
+                updateDisplay();
+            });
+            
+            // Add hover sound effect (optional - commented out by default)
+            /*
+            const buttons = document.querySelectorAll('button');
+            buttons.forEach(button => {
+                button.addEventListener('mouseenter', () => {
+                    // You could add a subtle hover sound here if desired
+                });
+            });
+            */
+        });
+    </script>
+</body>
+</html>
